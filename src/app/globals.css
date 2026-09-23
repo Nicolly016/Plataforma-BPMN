@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: #f4f5f7;
+  color: #18181b;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.bpmn-host,
+.bpmn-host .bjs-container,
+.bpmn-host .djs-container {
+  width: 100%;
+  height: 100%;
+}
+
+.bpmn-host .djs-container svg,
+.bpmn-host svg {
+  max-width: none;
+}
