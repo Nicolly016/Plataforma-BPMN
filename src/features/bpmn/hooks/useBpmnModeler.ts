@@ -6,6 +6,7 @@ import type Canvas from "diagram-js/lib/core/Canvas";
 import type CommandStack from "diagram-js/lib/command/CommandStack";
 import type ElementRegistry from "diagram-js/lib/core/ElementRegistry";
 import type Modeling from "bpmn-js/lib/features/modeling/Modeling";
+import manualResizeModule from "@/features/bpmn/resize/manual-resize";
 import type { BpmnEditorHandle, SelectedElement } from "@/features/bpmn/types/bpmn.types";
 import { isRecord } from "@/utils/guards";
 
@@ -30,7 +31,10 @@ export function useBpmnModeler(container: HTMLDivElement | null, xml: string) {
         return;
       }
 
-      const created = new modelerModule.default({ container: host });
+      const created = new modelerModule.default({
+        container: host,
+        additionalModules: [manualResizeModule],
+      });
       instance = created;
 
       try {
