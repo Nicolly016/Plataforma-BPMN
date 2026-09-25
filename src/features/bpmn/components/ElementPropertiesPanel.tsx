@@ -6,11 +6,12 @@ import { bpmnTypeLabel } from "@/features/bpmn/utils/bpmn.utils";
 import { EMPTY_ELEMENT_METADATA, type ElementMetadata } from "@/types/domain";
 import type { SelectedElement } from "@/features/bpmn/types/bpmn.types";
 
-const GROUPS: Array<{ title: string; fields: Array<{ key: keyof typeof EMPTY_ELEMENT_METADATA; label: string; multiline?: boolean }> }> = [
+const GROUPS: Array<{ title: string; fields: Array<{ key: keyof typeof EMPTY_ELEMENT_METADATA; label: string; multiline?: boolean; placeholder?: string }> }> = [
   {
     title: "Geral",
     fields: [
       { key: "description", label: "Descrição", multiline: true },
+      { key: "comment", label: "Comentário", multiline: true, placeholder: "Adicione uma observação sobre esta atividade..." },
       { key: "documentation", label: "Documentação", multiline: true },
     ],
   },
@@ -144,7 +145,12 @@ function ElementForm({
           {group.fields.map((field) => (
             <Field key={field.key} label={field.label}>
               {field.multiline ? (
-                <Textarea value={current[field.key]} maxLength={4000} onChange={(event) => update(field.key, event.target.value)} />
+                <Textarea
+                  value={current[field.key]}
+                  maxLength={4000}
+                  placeholder={field.placeholder}
+                  onChange={(event) => update(field.key, event.target.value)}
+                />
               ) : (
                 <Input value={current[field.key]} maxLength={4000} onChange={(event) => update(field.key, event.target.value)} />
               )}

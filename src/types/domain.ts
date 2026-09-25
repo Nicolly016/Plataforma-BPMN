@@ -74,6 +74,7 @@ export interface ElementMetadata {
   department: string;
   role: string;
   description: string;
+  comment: string;
   documentation: string;
   estimatedTime: string;
   systems: string;
@@ -108,6 +109,7 @@ export const EMPTY_ELEMENT_METADATA: Omit<ElementMetadata, "bpmnElementId" | "el
   department: "",
   role: "",
   description: "",
+  comment: "",
   documentation: "",
   estimatedTime: "",
   systems: "",

@@ -17,6 +17,7 @@ const metadata: ElementMetadata = {
   department: "Operações",
   role: "Analista",
   description: "Analisar a demanda",
+  comment: "Manter proporcionalidade entre homens e mulheres aptos.",
   documentation: "Registrar a decisão",
   estimatedTime: "2 dias",
   systems: "ERP",
@@ -120,6 +121,8 @@ describe("BPMN", () => {
     await saveElementMetadata(store, { role: "editor" }, "11111111-1111-4111-8111-111111111111", metadata);
     expect(rows[0]?.bpmnElementId).toBe("Activity_1");
     expect(rows[0]?.documentation).toBe("Registrar a decisão");
+    expect(rows[0]?.comment).toBe("Manter proporcionalidade entre homens e mulheres aptos.");
+    expect(rows[0]?.description).toBe("Analisar a demanda");
 
     await expect(
       saveElementMetadata(

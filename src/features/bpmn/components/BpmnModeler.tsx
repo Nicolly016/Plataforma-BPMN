@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ElementPropertiesDrawer, ElementPropertiesPanel } from "@/features/bpmn/components/ElementPropertiesPanel";
 import { ModelerToolbar } from "@/features/bpmn/components/ModelerToolbar";
 import { TextModelerPanel } from "@/features/bpmn/components/TextModelerPanel";
 import { saveDiagramAction, saveMetadataAction } from "@/features/bpmn/actions";
+import { CommentLayer, type DiagramHost } from "@/features/bpmn/comments/CommentLayer";
+import { visibleComment } from "@/features/bpmn/comments/comment-tooltip";
 import { useBpmnAutosave } from "@/features/bpmn/hooks/useBpmnAutosave";
 import { useBpmnKeyboardShortcuts, useUnsavedChangesGuard } from "@/features/bpmn/hooks/useBpmnKeyboardShortcuts";
 import { useBpmnModeler } from "@/features/bpmn/hooks/useBpmnModeler";
@@ -134,6 +136,17 @@ export function BpmnModeler({ process, initialMetadata }: { process: ProcessDeta
     URL.revokeObjectURL(url);
   }
 
+  const comments = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const item of Object.values(metadata)) {
+      const text = visibleComment(item.comment);
+      if (text) {
+        map[item.bpmnElementId] = text;
+      }
+    }
+    return map;
+  }, [metadata]);
+
   const currentMetadata = selected ? metadata[selected.id] ?? null : null;
   const status = metaStatus === "error" ? "error" : diagramStatus;
   const message = metaMessage ?? diagramMessage;
@@ -161,6 +174,7 @@ export function BpmnModeler({ process, initialMetadata }: { process: ProcessDeta
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
         {writerOpen ? <TextModelerPanel onApply={(xml) => void onApplyText(xml)} onClose={() => setWriterOpen(false)} /> : null}
         <div ref={setContainer} className="bpmn-host relative min-h-[280px] min-w-0 flex-1 bg-white" />
+        <CommentLayer viewer={modeler as DiagramHost | null} comments={comments} />
         <ElementPropertiesPanel element={selected} metadata={currentMetadata} onRename={(name) => handle?.rename(name)} onChange={onMetadataChange} />
       </div>
       <ElementPropertiesDrawer element={selected} metadata={currentMetadata} onRename={(name) => handle?.rename(name)} onChange={onMetadataChange} />

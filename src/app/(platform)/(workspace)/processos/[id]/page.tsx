@@ -78,7 +78,12 @@ export default async function ProcessPage({
         ))}
       </div>
       {tab === "visao" ? <p className="max-w-3xl text-sm leading-6 text-zinc-700">{process.description || "Este processo ainda não possui descrição."}</p> : null}
-      {tab === "fluxograma" ? <BpmnViewer xml={process.bpmnXml ?? DEFAULT_BPMN_XML} /> : null}
+      {tab === "fluxograma" ? (
+        <BpmnViewer
+          xml={process.bpmnXml ?? DEFAULT_BPMN_XML}
+          comments={Object.fromEntries(metadata.flatMap((item) => (item.comment.trim() ? [[item.bpmnElementId, item.comment.trim()]] : [])))}
+        />
+      ) : null}
       {tab === "documentacao" ? <Documentation metadata={metadata} activities={activities} /> : null}
       {tab === "atividades" ? (
         <Activities activities={activities} metadataById={metadataById} processId={process.id} selected={selected} selectedMetadata={selectedMetadata} />
@@ -99,7 +104,7 @@ function Info({ label, value }: { label: string; value: string }) {
 
 function Documentation({ metadata, activities }: { metadata: Awaited<ReturnType<typeof listElementMetadata>>; activities: Awaited<ReturnType<typeof extractActivities>> }) {
   const names = new Map(activities.map((activity) => [activity.id, activity.name]));
-  const documented = metadata.filter((item) => item.description || item.documentation || item.notes);
+  const documented = metadata.filter((item) => item.description || item.comment || item.documentation || item.notes);
   if (documented.length === 0) {
     return <p className="text-sm text-zinc-600">Nenhum elemento foi documentado ainda.</p>;
   }
@@ -110,6 +115,7 @@ function Documentation({ metadata, activities }: { metadata: Awaited<ReturnType<
         <article key={item.bpmnElementId} className="border border-zinc-200 bg-white p-4">
           <h2 className="text-sm font-semibold">{names.get(item.bpmnElementId) ?? item.bpmnElementId}</h2>
           {item.description ? <p className="mt-2 text-sm text-zinc-700">{item.description}</p> : null}
+          {item.comment ? <p className="mt-2 whitespace-pre-wrap text-sm text-zinc-600"><span className="font-medium text-zinc-800">Comentário. </span>{item.comment}</p> : null}
           {item.documentation ? <p className="mt-2 text-sm text-zinc-600">{item.documentation}</p> : null}
         </article>
       ))}
@@ -172,6 +178,7 @@ function Activities({
           <h2 className="font-semibold">{selected.name}</h2>
           <p className="mt-1 text-zinc-500">{selected.typeLabel}</p>
           <p className="mt-3">{selectedMetadata?.documentation || selectedMetadata?.description || "Esta atividade ainda não possui documentação."}</p>
+          {selectedMetadata?.comment ? <p className="mt-3 whitespace-pre-wrap text-zinc-700"><span className="font-medium">Comentário. </span>{selectedMetadata.comment}</p> : null}
         </article>
       ) : null}
     </div>
